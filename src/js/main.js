@@ -56,6 +56,14 @@ function stopSelection(event) {
   } else {
     continueSelection(event);
 
+    var upscale = "";
+    var origWidth = $('#picture')[0].naturalWidth;
+    var origWidth = 20000;
+    var origHeight = $('#picture')[0].naturalHeight;
+    var origHeight = 10000 * $('#picture')[0].naturalHeight / $('#picture')[0].naturalWidth;
+    if (origWidth != $('#picture')[0].naturalWidth) {
+      upscale = "scale=" + origWidth + ":-1,";
+    }
     var fps = 25;
     var durationStillStart = 2; // seconds the picture is zoomed at the start
     var durationZoomout = 6; // seconds the effect take place
@@ -68,18 +76,19 @@ function stopSelection(event) {
     var zoomX = $('#picture').width() / $('#selection').width();
     var zoomY = $('#picture').height() / $('#selection').height();
     var startZoom = Math.min(zoomX, zoomY).toFixed(3);
-    var origMinX = (minX * $('#picture')[0].naturalWidth / $('#picture')[0].width).toFixed(0);
-    var origMinY = (minY * $('#picture')[0].naturalHeight / $('#picture')[0].height).toFixed(0);
+    var origMinX = (minX * origWidth / $('#picture')[0].width).toFixed(0);
+    var origMinY = (minY * origHeight / $('#picture')[0].height).toFixed(0);
 
     var on1 = "((on-" + framesStillStart + ")/" + framesZoomout + ")"; // on1 is from 0 to 1 during zoomout phase
     // var onZoomoutEasing = "if(lt(" + on1 + ",0.5),2*" + on1 + "*" + on1 + ",1.05-(1-" + on1 + "*" + on1 + ")*(1-" + on1 + "*" + on1 + "))";
-    // var on = framesZoomout + "*if(lt(" + on1 + ",0),0,if(gt(" + on1 + ",1),1," + onZoomoutEasing + "))";
-    var on = framesZoomout + "*if(lt(" + on1 + ",0),0,if(gt(" + on1 + ",1),1," + on1 + "))";
+    var onZoomoutEasing = "1/(1+exp(8-16*" + on1 + "))";
+    var on = framesZoomout + "*if(lt(" + on1 + ",0),0,if(gt(" + on1 + ",1),1," + onZoomoutEasing + "))";
+    // var on = framesZoomout + "*if(lt(" + on1 + ",0),0,if(gt(" + on1 + ",1),1," + on1 + "))";
 
     var zoompanZ = "'" + startZoom + "*" + framesZoomout + "/(" + on + "*(" + startZoom + "-1)+" + framesZoomout + ")'";
     var zoompanX = "'" + origMinX + "*(" + framesZoomout + "-" + on + ")/" + framesZoomout + "'";
     var zoompanY = "'" + origMinY + "*(" + framesZoomout + "-" + on + ")/" + framesZoomout + "'";
-    var output = "ffmpeg -loop 1 -i \"" + file.name + "\" -vf \"zoompan=z=" + zoompanZ + ":x=" + zoompanX + ":y=" + zoompanY + ":d=" + totalFrames + "\" -c:v libx264 -t " + totalDuration + " /home/miso/svadba/prezentacia/" + file.name + "_zoomout.mp4";
+    var output = "ffmpeg -loop 1 -i \"" + file.name + "\" -vf \"" + upscale + "zoompan=z=" + zoompanZ + ":x=" + zoompanX + ":y=" + zoompanY + ":d=" + totalFrames + "\" -c:v libx264 -t " + totalDuration + " /home/miso/svadba/prezentacia/" + file.name + "_zoomout.mp4";
     console.log(output)
     $("#output").text(output);
     window.getSelection().selectAllChildren( $("#output")[0] );
