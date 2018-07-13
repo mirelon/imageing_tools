@@ -8,7 +8,7 @@
 for i in `ls | grep .jpg`; do echo -n "$i"; identify -format ",%w,%h\n" $i; done
 ```
 
-2. Use the node project https://github.com/mirelon/imaging_tools/. Drag and drop the photo to the wrapper frame in browser. Then, by mouse dragging, select a rectangle (aspect ratio 4x3 is automatically applied). Then, a text appears and is automatically copied to clipboard. It is something like this:
+2. Use the node project https://github.com/mirelon/imageing_tools/. Drag and drop the photo to the wrapper frame in browser. Then, by mouse dragging, select a rectangle (aspect ratio 4x3 is automatically applied). Then, a text appears and is automatically copied to clipboard. It is something like this:
 
 ```
 ffmpeg -loop 1 -i "2018-05_sip.jpg" -vf "scale=20000:-1,zoompan=z='1.743*150/(150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150)))))*(1.743-1)+150)':x='7505*(150-150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150))))))/150':y='2268*(150-150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150))))))/150':d=200" -c:v libx264 -t 10 /home/miso/svadba/prezentacia/2018-05_sip.jpg_zoomout.mp4
