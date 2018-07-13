@@ -46,6 +46,16 @@ function continueSelection(event) {
   var maxY = Math.max(y1, y2);
   var width = maxX - minX;
   var height = maxY - minY;
+
+  var area = width * height;
+  var centerX = (minX + maxX) / 2;
+  var centerY = (minY + maxY) / 2;
+
+  width = 4 * Math.sqrt(area / 12);
+  height = 3 * Math.sqrt(area / 12);
+  minX = centerX - width / 2;
+  minY = centerY - height / 2;
+
   $("#selection").css('top', minY).css('left', minX).css('width', width).css('height', height);
 }
 
@@ -58,11 +68,11 @@ function stopSelection(event) {
 
     var upscale = "";
     var origWidth = $('#picture')[0].naturalWidth;
-    var origWidth = 20000;
+    var origWidth = 10000;
     var origHeight = $('#picture')[0].naturalHeight;
     var origHeight = 10000 * $('#picture')[0].naturalHeight / $('#picture')[0].naturalWidth;
     if (origWidth != $('#picture')[0].naturalWidth) {
-      upscale = "scale=" + origWidth + ":-1,";
+      upscale = "scale=" + origWidth + ":" + origHeight + ",";
     }
     var fps = 25;
     var durationStillStart = 2; // seconds the picture is zoomed at the start
@@ -88,7 +98,7 @@ function stopSelection(event) {
     var zoompanZ = "'" + startZoom + "*" + framesZoomout + "/(" + on + "*(" + startZoom + "-1)+" + framesZoomout + ")'";
     var zoompanX = "'" + origMinX + "*(" + framesZoomout + "-" + on + ")/" + framesZoomout + "'";
     var zoompanY = "'" + origMinY + "*(" + framesZoomout + "-" + on + ")/" + framesZoomout + "'";
-    var output = "ffmpeg -loop 1 -i \"" + file.name + "\" -vf \"" + upscale + "zoompan=z=" + zoompanZ + ":x=" + zoompanX + ":y=" + zoompanY + ":d=" + totalFrames + "\" -c:v libx264 -t " + totalDuration + " /home/miso/svadba/prezentacia/" + file.name + "_zoomout.mp4";
+    var output = "ffmpeg -loop 1 -i \"" + file.name + "\" -vf \"" + upscale + "zoompan=z=" + zoompanZ + ":x=" + zoompanX + ":y=" + zoompanY + ":d=" + totalFrames + ":s=1200x900\" -c:v libx264 -t " + totalDuration + " /home/miso/svadba/prezentacia/" + file.name + "_zoomout.mp4";
     console.log(output)
     $("#output").text(output);
     window.getSelection().selectAllChildren( $("#output")[0] );

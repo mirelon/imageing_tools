@@ -95,12 +95,12 @@ textarea {
   margin: 30px;
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: 1200px;
 }
 
 #dropzone {
   position: relative;
-  height: 400px;
+  height: 900px;
   border: 1px solid black;
   color: #555555;
   background: #dddddd;
