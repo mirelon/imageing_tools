@@ -1,92 +1,77 @@
-# [HTML5 Boilerplate](https://html5boilerplate.com/)
-
-[![Build Status](https://travis-ci.org/h5bp/html5-boilerplate.svg)](https://travis-ci.org/h5bp/html5-boilerplate)
-[![devDependency Status](https://david-dm.org/h5bp/html5-boilerplate/dev-status.svg)](https://david-dm.org/h5bp/html5-boilerplate#info=devDependencies)
-
-HTML5 Boilerplate is a professional front-end template for building
-fast, robust, and adaptable web apps or sites.
-
-This project is the product of years of iterative development and
-community knowledge. It does not impose a specific development
-philosophy or framework, so you're free to architect your code in the
-way that you want.
-
-* Homepage: [https://html5boilerplate.com/](https://html5boilerplate.com/)
-* Source: [https://github.com/h5bp/html5-boilerplate](https://github.com/h5bp/html5-boilerplate)
-* Twitter: [@h5bp](https://twitter.com/h5bp)
-
-
 ## Quick start
 
-Choose one of the following options:
+1. Create a folder, fill it with photos. Name the photos with format M_2000-01_label.jpg, where the first letter represents the person on the photo, 2000-01 is the year and month of the photo used for sorting.
 
-1. Download the latest stable release from
-   [html5boilerplate.com](https://html5boilerplate.com/).
-2. Clone the git repo — `git clone
-   https://github.com/h5bp/html5-boilerplate.git` - and checkout the
-   [tagged release](https://github.com/h5bp/html5-boilerplate/releases)
-   you'd like to use.
-3. Run `npm install html5-boilerplate` and pull in what you need from the resulting `node_modules/html5-boilerplate/dist`
+2. Convert the pictures to have the same dimensions. This is a shortcut to make a list of pictures with corresponding dimensions:
 
+```
+for i in `ls | grep .jpg`; do echo -n "$i"; identify -format ",%w,%h\n" $i; done
+```
 
-## Features
+2. Use the node project https://github.com/mirelon/imaging_tools/. Drag and drop the photo to the wrapper frame in browser. Then, by mouse dragging, select a rectangle (aspect ratio 4x3 is automatically applied). Then, a text appears and is automatically copied to clipboard. It is something like this:
 
-* HTML5 ready. Use the new elements with confidence.
-* Designed with progressive enhancement in mind.
-* Includes:
-  * [`Normalize.css`](https://necolas.github.com/normalize.css/)
-    for CSS normalizations and common bug fixes
-  * [`jQuery`](https://jquery.com/) via CDN with [SRI Hash](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) and a local fallback
-  * A custom build of [`Modernizr`](https://modernizr.com/) for feature
-    detection
-  * [`Apache Server Configs`](https://github.com/h5bp/server-configs-apache)
-    that, among other, improve the web site's performance and security
-* Placeholder CSS Media Queries.
-* Useful CSS helper classes.
-* Default print styles, performance optimized.
-* An optimized version of the Google Universal Analytics snippet.
-* Protection against any stray `console` statements causing JavaScript
-  errors in older browsers.
-* "Delete-key friendly." Easy to strip out parts you don't need.
-* Extensive inline and accompanying documentation.
+```
+ffmpeg -loop 1 -i "2018-05_sip.jpg" -vf "scale=20000:-1,zoompan=z='1.743*150/(150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150)))))*(1.743-1)+150)':x='7505*(150-150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150))))))/150':y='2268*(150-150*if(lt(((on-50)/150),0),0,if(gt(((on-50)/150),1),1,1/(1+exp(8-16*((on-50)/150))))))/150':d=200" -c:v libx264 -t 10 /home/miso/svadba/prezentacia/2018-05_sip.jpg_zoomout.mp4
+```
 
+3. Create an order of those clips. Use the spreadsheet, e.g. https://docs.google.com/spreadsheets/d/150nTiaouk_xDD5eso7cMM8L9KmDZbUeFloo_mZ3uxns/edit#gid=1468093748. An essential formula to create clips named from "001.mp4" is this:
 
-## Browser support
+```
+=CONCATENATE("cp ", A67,"_zoomout.mp4 temp/", TEXT(E67, "000"), MID(D67,9,1), ".mp4")
+```
 
-* Chrome *(latest 2)*
-* Edge *(latest 2)*
-* Firefox *(latest 2)*
-* Internet Explorer 9+
-* Opera *(latest 2)*
-* Safari *(latest 2)*
+4. Install ffmpeg-concat and prepare files transition_left.json and transition_right.json:
 
-*This doesn't mean that HTML5 Boilerplate cannot be used in older browsers,
-just that we'll ensure compatibility with the ones mentioned above.*
+```
+[
+  {
+    "name": "directional",
+    "duration": 500,
+    "params": {"direction": [-1,0]} // or [1,0]
+  }
+]
+```
 
-If you need legacy browser support you
-can use [HTML5 Boilerplate v4](https://github.com/h5bp/html5-boilerplate/tree/v4) (IE 6+, Firefox 3.6+, Safari 4+),
-or [HTML5 Boilerplate v5](https://github.com/h5bp/html5-boilerplate/tree/v5.0.0) (IE8+). They are no longer actively developed.
+5. Run this ruby script:
 
+```
+files = Dir["*.mp4"]
+  .select{|f| f.length == 8}
+  .map{|f| f[0,4]}
+  .sort
+  .map do |file|
+  {
+    first: file,
+    last: file,
+    name: "#{file}.mp4"
+  }
+end
 
-## Documentation
+puts files
 
-Take a look at the [documentation table of contents](dist/doc/TOC.md).
-This documentation is bundled with the project which makes it 
-available for offline reading and provides a useful starting point for
-any documentation you want to write about your project.
-
-
-## Contributing
-
-Hundreds of developers have helped to make the HTML5 Boilerplate. Anyone is welcome to [contribute](.github/CONTRIBUTING.md),
-however, if you decide to get involved, please take a moment to review
-the [guidelines](.github/CONTRIBUTING.md):
-
-* [Bug reports](.github/CONTRIBUTING.md#bugs)
-* [Feature requests](.github/CONTRIBUTING.md#features)
-* [Pull requests](.github/CONTRIBUTING.md#pull-requests)
-
-
-## License
-
-The code is available under the [MIT license](LICENSE.txt).
+while files.size > 1
+  puts
+  puts files.size
+  puts
+  files = files.each_slice(2).map do |a,b|
+    if b.nil?
+      a
+    else
+      transition = (b[:first][3] == 'L' ? 'transitions_right.json' : 'transitions_left.json')
+      newname = "#{a[:first]}-#{b[:last]}.mp4"
+      puts "Join #{a[:name]} with #{b[:name]} transition #{transition}"
+      if File.file?(newname)
+        puts "Already joined."
+      else
+        command = "node_modules/.bin/ffmpeg-concat -T #{transition} -d 750 -o #{newname} #{a[:name]} #{b[:name]}"
+        system(command)
+      end
+      {
+        name: newname,
+        first: a[:first],
+        last: b[:last]
+      }
+    end
+  end
+end
+ ```
