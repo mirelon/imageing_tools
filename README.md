@@ -20,7 +20,7 @@ ffmpeg -loop 1 -i "2018-05_sip.jpg" -vf "scale=20000:-1,zoompan=z='1.743*150/(15
 =CONCATENATE("cp ", A67,"_zoomout.mp4 temp/", TEXT(E67, "000"), MID(D67,9,1), ".mp4")
 ```
 
-4. Install ffmpeg-concat and prepare files transition_left.json and transition_right.json:
+4. Install https://github.com/transitive-bullshit/ffmpeg-concat and prepare files transition_left.json and transition_right.json:
 
 ```
 [
